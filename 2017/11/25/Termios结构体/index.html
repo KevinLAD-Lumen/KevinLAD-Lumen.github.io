@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    
+    <title>Termios结构体 | More Than Robotics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="termios 结构是在POSIX规范中定义的标准接口，它类似于系统V中的termio接口，通过设置termios类型的数据结构的值和使用一小组函数调用，你就可以对终端接口进行控制。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Termios结构体">
+<meta property="og:url" content="http://kevinlad.me/2017/11/25/Termios结构体/index.html">
+<meta property="og:site_name" content="More Than Robotics">
+<meta property="og:description" content="termios 结构是在POSIX规范中定义的标准接口，它类似于系统V中的termio接口，通过设置termios类型的数据结构的值和使用一小组函数调用，你就可以对终端接口进行控制。">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-10-30T10:32:01.912Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Termios结构体">
+<meta name="twitter:description" content="termios 结构是在POSIX规范中定义的标准接口，它类似于系统V中的termio接口，通过设置termios类型的数据结构的值和使用一小组函数调用，你就可以对终端接口进行控制。">
+    
+
+    
+        <link rel="alternate" href="/" title="More Than Robotics" type="application/atom+xml">
+    
+
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+
+
+</head>
+</html>
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">More Than Robotics</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/avatar.png">
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search">
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something...">
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search">
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/avatar.png">
+            <h2 id="name">KevinLAD</h2>
+            <h3 id="title">Robotics Engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Shenzhen, China</span>
+            <a id="follow" target="_blank" href="https://github.com/kevinladlee/">FOLLOW</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                5
+                <span>posts</span>
+            </div>
+            <div class="article-info-block">
+                4
+                <span>tags</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/kevinladlee/" target="_blank" title="github">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="dribbble">
+                            <i class="fab fa-dribbble"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="rss">
+                            <i class="fab fa-rss"></i>
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-Termios结构体" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            Termios结构体
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/11/25/Termios结构体/">
+            <time datetime="2017-11-25T07:55:37.000Z" itemprop="datePublished">2017-11-25</time>
+        </a>
+    </div>
+
+
+                        
+                        
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>termios 结构是在POSIX规范中定义的标准接口，它类似于系统V中的termio接口，通过设置termios类型的数据结构的值和使用一小组函数调用，你就可以对终端接口进行控制。</p>
+<a id="more"></a>
+<h1 id="数据成员"><a href="#数据成员" class="headerlink" title="数据成员"></a>数据成员</h1><p>termios 函数族提供了一个常规的终端接口，用于控制非同步通信端口。 这个结构包含了至少下列成员：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tcflag_t c_iflag;      /* 输入模式 */</span><br><span class="line">tcflag_t c_oflag;      /* 输出模式 */</span><br><span class="line">tcflag_t c_cflag;      /* 控制模式 */</span><br><span class="line">tcflag_t c_lflag;      /* 本地模式 */</span><br><span class="line">cc_t c_cc[NCCS];       /* 控制字符 */</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">termios</span>  </span></span><br><span class="line"><span class="class">&#123;</span>  </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> c_iflag; <span class="comment">/* 输入模式标志*/</span>  </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> c_oflag; <span class="comment">/* 输出模式标志*/</span>  </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> c_cflag; <span class="comment">/* 控制模式标志*/</span>  </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> c_lflag; <span class="comment">/*区域模式标志或本地模式标志或局部模式*/</span>  </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> c_line; <span class="comment">/*行控制line discipline */</span>  </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> c_cc[NCC]; <span class="comment">/* 控制字符特性*/</span>  </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h1 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h1><p>这个变量被用来提供一个健全的线路设置集 合, 如果这个端口在被用户初始化前使用. 驱动初始化这个变量使用一个标准的数值集, 它拷贝自 tty_std_termios变量. tty_std_termos 在 tty 核心被定义为:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">termios</span> <span class="title">tty_std_termios</span> = &#123;</span>  </span><br><span class="line">    .c_iflag = ICRNL | IXON,  </span><br><span class="line">    .c_oflag = OPOST | ONLCR,  </span><br><span class="line">    .c_cflag = B38400 | CS8 | CREAD | HUPCL,  </span><br><span class="line">    .c_lflag = ISIG | ICANON | ECHO | ECHOE | ECHOK | ECHOCTL | ECHOKE | IEXTEN,  </span><br><span class="line">    .c_cc = INIT_C_CC  </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="c-iflag"><a href="#c-iflag" class="headerlink" title="c_iflag"></a>c_iflag</h2><p>输入模式标志，控制终端输入方式，具体参数如下所示。</p>
+<table>
+<thead>
+<tr>
+<th>参数表</th>
+<th>键值说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IGNBRK</td>
+<td>忽略BREAK键输入</td>
+</tr>
+<tr>
+<td>BRKINT</td>
+<td>如果设置了IGNBRK，BREAK键的输入将被忽略，如果设置了BRKINT ，将产生SIGINT中断</td>
+</tr>
+<tr>
+<td>IGNPAR</td>
+<td>忽略奇偶校验错误</td>
+</tr>
+<tr>
+<td>PARMRK</td>
+<td>标识奇偶校验错误</td>
+</tr>
+<tr>
+<td>INPCK</td>
+<td>允许输入奇偶校验</td>
+</tr>
+<tr>
+<td>ISTRIP</td>
+<td>去除字符的第8个比特</td>
+</tr>
+<tr>
+<td>INLCR</td>
+<td>将输入的NL（换行）转换成CR（回车）</td>
+</tr>
+<tr>
+<td>IGNCR</td>
+<td>忽略输入的回车</td>
+</tr>
+<tr>
+<td>ICRNL</td>
+<td>将输入的回车转化成换行（如果IGNCR未设置的情况下）</td>
+</tr>
+<tr>
+<td>IUCLC</td>
+<td>将输入的大写字符转换成小写字符（非POSIX）</td>
+</tr>
+<tr>
+<td>IXON</td>
+<td>允许输入时对XON/XOFF流进行控制</td>
+</tr>
+<tr>
+<td>IXANY</td>
+<td>输入任何字符将重启停止的输出</td>
+</tr>
+<tr>
+<td>IXOFF</td>
+<td>允许输入时对XON/XOFF流进行控制</td>
+</tr>
+<tr>
+<td>IMAXBEL</td>
+<td>当输入队列满的时候开始响铃，Linux在使用该参数而是认为该参数总是已经设置</td>
+</tr>
+</tbody>
+</table>
+<h2 id="c-oflag"><a href="#c-oflag" class="headerlink" title="c_oflag"></a>c_oflag</h2><p>输出模式标志，控制终端输出方式，具体参数如下所示。</p>
+<table>
+<thead>
+<tr>
+<th>参数表</th>
+<th>键值说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OPOST</td>
+<td>处理后输出</td>
+</tr>
+<tr>
+<td>OLCUC</td>
+<td>将输入的小写字符转换成大写字符（非POSIX）</td>
+</tr>
+<tr>
+<td>ONLCR</td>
+<td>将输入的NL（换行）转换成CR（回车）及NL（换行）</td>
+</tr>
+<tr>
+<td>OCRNL</td>
+<td>将输入的CR（回车）转换成NL（换行）</td>
+</tr>
+<tr>
+<td>ONOCR</td>
+<td>第一行不输出回车符</td>
+</tr>
+<tr>
+<td>ONLRET</td>
+<td>不输出回车符</td>
+</tr>
+<tr>
+<td>OFILL</td>
+<td>发送填充字符以延迟终端输出</td>
+</tr>
+<tr>
+<td>OFDEL</td>
+<td>以ASCII码的DEL作为填充字符，如果未设置该参数，填充字符将是NUL（‘/0’）（非POSIX）</td>
+</tr>
+<tr>
+<td>NLDLY</td>
+<td>换行输出延时，可以取NL0（不延迟）或NL1（延迟0.1s）</td>
+</tr>
+<tr>
+<td>CRDLY</td>
+<td>回车延迟，取值范围为：CR0、CR1、CR2和 CR3</td>
+</tr>
+<tr>
+<td>TABDLY</td>
+<td>水平制表符输出延迟，取值范围为：TAB0、TAB1、TAB2和TAB3</td>
+</tr>
+<tr>
+<td>BSDLY</td>
+<td>空格输出延迟，可以取BS0或BS1</td>
+</tr>
+<tr>
+<td>VTDLY</td>
+<td>垂直制表符输出延迟，可以取VT0或VT1</td>
+</tr>
+<tr>
+<td>FFDLY</td>
+<td>换页延迟，可以取FF0或FF1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="c-cflag"><a href="#c-cflag" class="headerlink" title="c_cflag"></a>c_cflag</h2><p>控制模式标志，指定终端硬件控制信息，具体参数如下所示。<br>| 参数表 | 键值说明<br>|—|—|<br>|CBAUD |波特率（4+1位）（非POSIX）<br>|CBAUDEX| 附加波特率（1位）（非POSIX）<br>|CSIZE |字符长度，取值范围为CS5、CS6、CS7或CS8<br>|CSTOPB| 设置两个停止位<br>|CREAD |使用接收器<br>|PARENB| 使用奇偶校验<br>|PARODD| 对输入使用奇偶校验，对输出使用偶校验<br>|HUPCL |关闭设备时挂起<br>|CLOCAL| 忽略调制解调器线路状态<br>|CRTSCTS| 使用RTS/CTS流控制</p>
+<h2 id="c-lflag"><a href="#c-lflag" class="headerlink" title="c_lflag"></a>c_lflag</h2><p>本地模式标志，控制终端编辑功能，具体参数如下所示。</p>
+<table>
+<thead>
+<tr>
+<th>参数表</th>
+<th>键值说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ISIG</td>
+<td>当输入INTR、QUIT、SUSP或DSUSP时，产生相应的信号</td>
+</tr>
+<tr>
+<td>ICANON</td>
+<td>使用标准输入模式</td>
+</tr>
+<tr>
+<td>XCASE</td>
+<td>在ICANON和XCASE同时设置的情况下，终端只使用大写。如果        只设置了XCASE，则输入字符将被转换为小写字符，除非字符        使用了转义字符（非POSIX，且Linux不支持该参数）</td>
+</tr>
+<tr>
+<td>ECHO</td>
+<td>显示输入字符</td>
+</tr>
+<tr>
+<td>ECHOE</td>
+<td>如果ICANON同时设置，ERASE将删除输入的字符，WERASE将</td>
+<td>删除输入的单词</td>
+</tr>
+<tr>
+<td>ECHOK</td>
+<td>如果ICANON同时设置，KILL将删除当前行</td>
+</tr>
+<tr>
+<td>ECHONL</td>
+<td>如果ICANON同时设置，即使ECHO没有设置依然显示换行符</td>
+</tr>
+<tr>
+<td>ECHOPRT</td>
+<td>如果ECHO和ICANON同时设置，将删除打印出的字符（非POSIX）</td>
+</tr>
+<tr>
+<td>TOSTOP</td>
+<td>向后台输出发送SIGTTOU信号</td>
+</tr>
+</tbody>
+</table>
+<h2 id="c-cc-数组"><a href="#c-cc-数组" class="headerlink" title="c_cc 数组"></a>c_cc 数组</h2><p>特殊控制字元可提供使用者设定一些特殊的功能，如Ctrl+C的字元组合。</p>
+<p>特殊控制字元主要是利用termios结构里c_cc的阵列成员来做设定。c_cc阵列主要用于正规与非正规两种环境，但要注意的是正规与非正规不可混为一谈。其定义了特殊的控制字符。</p>
+<table>
+<thead>
+<tr>
+<th>参数表</th>
+<th>键值说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VINTR</td>
+<td>(003, ETX, Ctrl-C, or also 0177, DEL, rubout) 中断字符。发出 SIGINT 信号。当设置 ISIG 时可被识别，不再作为输入传递。</td>
+</tr>
+<tr>
+<td>VQUIT</td>
+<td>(034, FS, Ctrl-) 退出字符。发出 SIGQUIT 信号。当设置 ISIG 时可被识别，不再作为输入传递。  </td>
+</tr>
+<tr>
+<td>VERASE</td>
+<td>(0177, DEL, rubout, or 010, BS, Ctrl-H,or also#) 删除字符。删除上一个还没有删掉的字符，但不删除上个EOF 或行首。当设置 ICANON 时可被识别，不再作为输入传递。</td>
+<td>VKILL</td>
+<td>(025, NAK, Ctrl-U, or Ctrl-X, or also @) 止字符。删除自上一个 EOF 或行首以来的输入。当设置 ICANON 可被识别，不再作为输入传递。  </td>
+</tr>
+<tr>
+<td>VEOF</td>
+<td>(004, EOT, Ctrl-D) 文件尾字符。更精确地说，这个符使得 tty 缓冲中的内容被送到等待输入的用户程序中，而不必到 EOL。如果它是一行的第一个字符，那么用户程序的read() 将回 0，指示读到了 EOF。当设置 ICANON 时可被识别，不再作为入传递。  </td>
+</tr>
+<tr>
+<td>VMIN</td>
+<td>非 canonical 模式读的最小字符数（MIN 主要是表示满足read的最小字元数）。  </td>
+</tr>
+<tr>
+<td>VEOL</td>
+<td>(0, NUL) 附加的行尾字符。当设置 ICANON 时可被别。  </td>
+</tr>
+<tr>
+<td>VTIME</td>
+<td>非 canonical 模式读时的延时，以十分之一秒为单位</td>
+<td>VEOL2</td>
+<td>(not in POSIX; 0, NUL) 另一个行尾字符。当设ICANON 时可被识别。  </td>
+</tr>
+<tr>
+<td>VSWTCH</td>
+<td>(not in POSIX; not supported under Linux;0,NUL) 开关字符。(只为 shl 所用。)  </td>
+</tr>
+<tr>
+<td>VSTART</td>
+<td>(021, DC1, Ctrl-Q) 开始字符。重新开始被 Stop字符中止的输出。当设置 IXON 时可被识别，不再作为输入传递。  </td>
+</tr>
+<tr>
+<td>VSTOP</td>
+<td>(023, DC3, Ctrl-S) 停止字符。停止输出，直到键Start 字符。当设置 IXON 时可被识别，不再作为输入传递。  </td>
+</tr>
+<tr>
+<td>VSUSP</td>
+<td>(032, SUB, Ctrl-Z) 挂起字符。发送 SIGTSTP 号。当设置 ISIG 时可被识别，不再作为输入传递。  </td>
+</tr>
+<tr>
+<td>VDSUSP</td>
+<td>(not in POSIX; not supported under Linux;031,EM, Ctrl-Y) 延时挂起信号。当用户程序读到这个字符时，送SIGTSTP 信号。当设置 IEXTEN 和 ISIG，并且系统支持作业理时可被识别，不再作为输入传递。  </td>
+</tr>
+<tr>
+<td>VLNEXT</td>
+<td>(not in POSIX; 026, SYN, Ctrl-V) 字面上的一个。引用下一个输入字符，取消它的任何特殊含义。当设置IEXTEN时可被识别，不再作为输入传递。  </td>
+</tr>
+<tr>
+<td>VWERASE</td>
+<td>(not in POSIX; 027, ETB, Ctrl-W) 删除词当设置 ICANON 和 IEXTEN 时可被识别，不再作为输入传递。  </td>
+</tr>
+<tr>
+<td>VREPRINT</td>
+<td>(not in POSIX; 022, DC2, Ctrl-R) 重新输未读的字符。当设置 ICANON 和 IEXTEN 时可被识别，不再作为入传递。  </td>
+</tr>
+<tr>
+<td>VDISCARD</td>
+<td>(not in POSIX; not supported underLinux;017, SI, Ctrl-O) 开关：开始/结束丢弃未完成的输出当设置IEXTEN 时可被识别，不再作为输入传递。  </td>
+</tr>
+<tr>
+<td>VSTATUS</td>
+<td>(not in POSIX; not supported under Linuxstatus request: 024, DC4, Ctrl-T). </td>
+</tr>
+</tbody>
+</table>
+<h1 id="与此结构体相关的函数"><a href="#与此结构体相关的函数" class="headerlink" title="与此结构体相关的函数"></a>与此结构体相关的函数</h1><h2 id="（一）tcgetattr"><a href="#（一）tcgetattr" class="headerlink" title="（一）tcgetattr()"></a>（一）tcgetattr()</h2><h3 id="1-原型"><a href="#1-原型" class="headerlink" title="1.原型"></a>1.原型</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">tcgetattr</span><span class="params">(<span class="keyword">int</span> fd,struct termois &amp; termios_p)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="2-功能"><a href="#2-功能" class="headerlink" title="2.功能"></a>2.功能</h3><p>取得终端介质（fd）初始值，并把其值 赋给<code>temios_p</code>;函数可以从后台进程中调用；但是，终端属性可能被后来的前台进程所改变。</p>
+<h2 id="（二）tcsetattr"><a href="#（二）tcsetattr" class="headerlink" title="（二）tcsetattr()"></a>（二）tcsetattr()</h2><h3 id="1-原型-1"><a href="#1-原型-1" class="headerlink" title="1.原型"></a>1.原型</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">tcsetattr</span><span class="params">(<span class="keyword">int</span> fd,<span class="keyword">int</span> actions,<span class="keyword">const</span> struct    termios *termios_p)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="2-功能-1"><a href="#2-功能-1" class="headerlink" title="2.功能"></a>2.功能</h3><p>设置与终端相关的参数 (除非需要底层支持却无法满足)，使用 <code>termios_p</code> 引用的 <code>termios</code> 结构。optional_actions （<code>tcsetattr</code>函数的第二个参数）指定了什么时候改变会起作用： </p>
+<ul>
+<li>TCSANOW：改变立即发生  </li>
+<li>TCSADRAIN：改变在所有写入 fd 的输出都被传输后生效。这个函数应当用于修改影响输出的参数时使用。(当前输出完成时将值改变)  </li>
+<li>TCSAFLUSH ：改变在所有写入 fd 引用的对象的输出都被传输后生效，所有已接受但未读入的输入都在改变发生前丢弃(同TCSADRAIN，但会舍弃当前所有值)。 </li>
+</ul>
+<h2 id="（三）tcsendbreak"><a href="#（三）tcsendbreak" class="headerlink" title="（三）tcsendbreak()"></a>（三）tcsendbreak()</h2><p>  传送连续的 0 值比特流，持续一段时间，如果终端使用异步串行数据传输的话。如果 <code>duration</code> 是 0，它至少传输 0.25 秒，不会超过 0.5 秒。如果 <code>duration</code> 非零，它发送的时间长度由实现定义。<br>如果终端并非使用异步串行数据传输，<code>tcsendbreak()</code> 什么都不做。</p>
+<h2 id="（四）tcdrain"><a href="#（四）tcdrain" class="headerlink" title="（四）tcdrain()"></a>（四）tcdrain()</h2><p>等待直到所有写入 fd 引用的对象的输出都被传输。</p>
+<h2 id="（五）tcflush"><a href="#（五）tcflush" class="headerlink" title="（五）tcflush()"></a>（五）tcflush()</h2><p>丢弃要写入 引用的对象，但是尚未传输的数据，或者收到但是尚未读取的数据，取决于 queue_selector 的值：</p>
+<ul>
+<li>TCIFLUSH ：刷新收到的数据但是不读  </li>
+<li>TCOFLUSH ：刷新写入的数据但是不传送  </li>
+<li>TCIOFLUSH ：同时刷新收到的数据但是不读，并且刷新写入的数据但是不传送 </li>
+</ul>
+<h2 id="（六）tcflow"><a href="#（六）tcflow" class="headerlink" title="（六）tcflow()"></a>（六）tcflow()</h2><p>挂起 <code>fd</code> 引用的对象上的数据传输或接收，取决于 <code>action</code> 的值：</p>
+<ul>
+<li>TCOOFF ：挂起输出  </li>
+<li>TCOON ：重新开始被挂起的输出  </li>
+<li>TCIOFF ：发送一个 STOP 字符，停止终端设备向系统传送数据  </li>
+<li>TCION ：发送一个 START 字符，使终端设备向系统传输数据  </li>
+</ul>
+<p>打开一个终端设备时的默认设置是输入和输出都没有挂起。</p>
+<h2 id="七-波特率函数"><a href="#七-波特率函数" class="headerlink" title="(七)波特率函数"></a>(七)波特率函数</h2><p>被用来获取和设置 <code>termios</code> 结构中，输入和输出波特率的值。新值不会马上生效，直到成功调用了 <code>tcsetattr()</code> 函数。<br>设置速度为 <code>B0</code> 使得 <code>modem</code> “挂机”。与 <code>B38400</code> 相应的实际比特率可以用 <code>setserial(8)</code>调整。<br>输入和输出波特率被保存于 <code>termios</code> 结构中。<br><code>cfmakeraw</code> 设置终端属性如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">termios_p-&gt;c_iflag &amp;= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL|IXON);</span><br><span class="line">termios_p-&gt;c_oflag &amp;= ~OPOST;</span><br><span class="line">termios_p-&gt;c_lflag &amp;= ~(ECHO|ECHONL|ICANON|ISIG|IEXTEN);</span><br><span class="line">termios_p-&gt;c_cflag &amp;= ~(CSIZE|PARENB);</span><br><span class="line">termios_p-&gt;c_cflag |= CS8;</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li><code>cfgetospeed()</code> 返回 <code>termios_p</code> 指向的 <code>termios</code> 结构中存储的输出波特率 </li>
+<li><code>cfsetospeed()</code> 设置 <code>termios_p</code> 指向的 <code>termios</code> 结构中存储的输出波特率为 speed。取值必须是以下常量之一：<br><code>B0</code>        <code>B50</code>        <code>B75</code>        <code>B110</code>        <code>B134</code>        <code>B150</code>        <code>B200</code>        <code>B300</code>        <code>B600</code>        <code>B1200</code>        <code>B1800</code>        <code>B2400</code>        <code>B4800</code>        <code>B9600</code>        <code>B19200</code>        <code>B38400</code>        <code>B57600</code>        <code>B115200</code>        <code>B230400</code><br>其中：零值 B0 用来中断连接。如果指定了 B0，不应当再假定存在连接。通常，这样将断开连接。<code>CBAUDEX</code> 是一个掩码，指示高于 POSIX.1 定义的速度的那一些 (57600 及以上)。因此，<code>B57600 &amp; CBAUDEX</code> 为非零。 </li>
+<li><code>cfgetispeed()</code> 返回 <code>termios</code> 结构中存储的输入波特率。 </li>
+<li><code>cfsetispeed()</code> 设置 <code>termios</code> 结构中存储的输入波特率为 speed。如果输入波特率被设为0，实际输入波特率将等于输出波特率。</li>
+</ol>
+<p>RETURN VALUE 返回值</p>
+<ol>
+<li><code>cfgetispeed()</code> 返回 <code>termios</code> 结构中存储的输入波特率。 </li>
+<li><code>cfgetospeed()</code> 返回 <code>termios</code> 结构中存储的输出波特率。 </li>
+<li>其他函数返回：<br>（1) 0：成功<br>（2) 1：失败<br> 并且为 <code>errno</code> 置值来指示错误。<br>注意 <code>tcsetattr()</code> 返回成功，如果任何所要求的修改可以实现的话。因此，当进行多重修改时，应当在这个函数之后再次调用 <code>tcgetattr()</code> 来检测是否所有修改都成功实现</li>
+</ol>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
+<li><a href="https://www.mkssoftware.com/docs/man5/struct_termios.5.asp" target="_blank" rel="noopener">Struct termios</a></li>
+<li><a href="https://en.wikibooks.org/wiki/Serial_Programming/termios" target="_blank" rel="noopener">Serial Programming/termios</a></li>
+</ol>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="http://kevinlad.me/2017/11/25/Termios结构体/" data-id="cjt5hj8h3000h0tvv33aeq4cd" class="article-share-link"><i class="fas fa-share"></i>Share</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+        <a href="http://kevinlad.me/2017/11/25/Termios结构体/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://kevinlad.me/2017/11/25/Termios结构体/">Comments</a>
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2017/11/25/Glog-Tutorial/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    Glog Tutorial
+                
+            </div>
+        </a>
+    
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+        <section id="comments">
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+</section>
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">recent</h3>
+        <div class="widget">
+            <ul id="recent-post" class="no-thumbnail">
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2018/07/09/RoboRTS Gazebo Plugin/" class="title">RoboRTS Tutorial | Gazebo Plugin</a></p>
+                            <p class="item-date"><time datetime="2018-07-09T07:55:37.000Z" itemprop="datePublished">2018-07-09</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2017/11/25/ud810-note-1/" class="title">ROS入门 (1) | ROS安装与配置</a></p>
+                            <p class="item-date"><time datetime="2017-11-25T12:55:37.000Z" itemprop="datePublished">2017-11-25</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2017/11/25/ROS-URDF-Tutorial-1-URDF简介与入门/" class="title">URDF教程 (1): URDF简介与入门</a></p>
+                            <p class="item-date"><time datetime="2017-11-25T08:10:17.000Z" itemprop="datePublished">2017-11-25</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2017/11/25/Glog-Tutorial/" class="title">Glog Tutorial</a></p>
+                            <p class="item-date"><time datetime="2017-11-25T08:01:16.000Z" itemprop="datePublished">2017-11-25</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2017/11/25/Termios结构体/" class="title">Termios结构体</a></p>
+                            <p class="item-date"><time datetime="2017-11-25T07:55:37.000Z" itemprop="datePublished">2017-11-25</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">archives</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">tags</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/RoboRTS/">RoboRTS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gazebo/">gazebo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/glog/">glog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ros/">ros</a><span class="tag-list-count">3</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">tag cloud</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/RoboRTS/" style="font-size: 10px;">RoboRTS</a> <a href="/tags/gazebo/" style="font-size: 10px;">gazebo</a> <a href="/tags/glog/" style="font-size: 10px;">glog</a> <a href="/tags/ros/" style="font-size: 20px;">ros</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">links</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2019 Kevin Lee<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+        </div>
+    </div>
+</footer>
+        
+    
+    <script>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://kevinlad.me/2017/11/25/Termios结构体/';
+        
+        this.page.identifier = 'Termios结构体';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'kevinlad-blog' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>

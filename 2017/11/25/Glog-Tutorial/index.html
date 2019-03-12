@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    
+    <title>Glog Tutorial | More Than Robotics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="本篇文档主要介绍glog cpp库的一些使用。">
+<meta name="keywords" content="glog">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Glog Tutorial">
+<meta property="og:url" content="http://kevinlad.me/2017/11/25/Glog-Tutorial/index.html">
+<meta property="og:site_name" content="More Than Robotics">
+<meta property="og:description" content="本篇文档主要介绍glog cpp库的一些使用。">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-10-30T10:32:01.912Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Glog Tutorial">
+<meta name="twitter:description" content="本篇文档主要介绍glog cpp库的一些使用。">
+    
+
+    
+        <link rel="alternate" href="/" title="More Than Robotics" type="application/atom+xml">
+    
+
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+
+
+</head>
+</html>
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">More Than Robotics</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/avatar.png">
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search">
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something...">
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search">
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/avatar.png">
+            <h2 id="name">KevinLAD</h2>
+            <h3 id="title">Robotics Engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Shenzhen, China</span>
+            <a id="follow" target="_blank" href="https://github.com/kevinladlee/">FOLLOW</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                5
+                <span>posts</span>
+            </div>
+            <div class="article-info-block">
+                4
+                <span>tags</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/kevinladlee/" target="_blank" title="github">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="dribbble">
+                            <i class="fab fa-dribbble"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="rss">
+                            <i class="fab fa-rss"></i>
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-Glog-Tutorial" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            Glog Tutorial
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/11/25/Glog-Tutorial/">
+            <time datetime="2017-11-25T08:01:16.000Z" itemprop="datePublished">2017-11-25</time>
+        </a>
+    </div>
+
+
+                        
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/glog/">glog</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>本篇文档主要介绍glog cpp库的一些使用。</p>
+<a id="more"></a>
+<p>Github地址:<br><a href="https://github.com/google/glog" target="_blank" rel="noopener">C++ implementation of the Google logging module </a><br>安装见README。</p>
+<p>参考文章：<br><a href="https://github.com/google/glog/blob/master/doc/glog.html" target="_blank" rel="noopener">glog doc</a><br><a href="http://mengjh.blog.51cto.com/2860827/546766" target="_blank" rel="noopener">glog功能介绍</a></p>
+<h1 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h1><p>Google glog是一个基于程序级记录日志信息的c++库，它提供的API使用方式与c++的stream风格类似，并且提供了一系列的宏用来调用。例如如下代码：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;glog/logging.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Initialize Google's logging library.</span></span><br><span class="line">  google::InitGoogleLogging(argv[<span class="number">0</span>]);</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  LOG(INFO) &lt;&lt; <span class="string">"Found "</span> &lt;&lt; num_cookies &lt;&lt; <span class="string">" cookies"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="严重级别（Severity-Level）"><a href="#严重级别（Severity-Level）" class="headerlink" title="严重级别（Severity Level）"></a>严重级别（Severity Level）</h1><p> LOG可以指明如下几个严重级别（升序）<br> <code>INFO</code>，<code>WARNING</code>，<code>ERROR</code>，<code>FATAL</code><br> 其中，当用户程序记录一个FATAL信息之后，程序会被终止。<br><strong>注意</strong>： 指定严重级的信息不只会记录在相应级别的log中，还会记录在所有低严重级的log中。<br>例如，当程序记录一个<code>FATAL</code>信息的时候，相应信息会分别出现在<code>INFO</code>，<code>WARNING</code>，<code>ERROR</code>，<code>FATAL</code>级别的日志中。</p>
+<p>此外，在Debug模式下（如没有define NDEBUG宏），<code>DFATAL</code>级别可以记录<code>FATAL</code>级别的错误但会通过自动降低严重级别到<code>ERROR</code>来避免挂起程序。</p>
+<p>除非特殊指明路径，glog会默认记录在<br><code>&quot;/tmp/&lt;program name&gt;.&lt;hostname&gt;.&lt;user name&gt;.log.&lt;severity level&gt;.&lt;date&gt;.&lt;time&gt;.&lt;pid&gt;&quot;</code><br>例如：<br><code>&quot;/tmp/hello_world.example.com.hamaji.log.INFO.20080709-222411.10474&quot;</code></p>
+<p>默认情况，glog也会复制<code>ERROR</code>和<code>FATAL</code>的日志信息到stderr。</p>
+<blockquote>
+<p>RRTS中可以通过引入log.h， 来使用LOG_INFO,LOG_ERROR等简写宏定义。 </p>
+</blockquote>
+<h1 id="条件记录日志"><a href="#条件记录日志" class="headerlink" title="条件记录日志"></a>条件记录日志</h1><p>glog可以控制日志信息在指定条件下进行记录。具体使用如下：</p>
+<ol>
+<li><code>LOG_IF(severity, condition)</code><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOG_IF(INFO, num_cookies &gt; <span class="number">10</span>) &lt;&lt; <span class="string">"Got lots of cookies"</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>上面的语句表示，只有当num_cookies &gt; 10条件成立时，“Got lots of cookies”日志信息才被记录。</p>
+<ol start="2">
+<li><code>LOG_EVERY_N(severity, n)</code> <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOG_EVERY_N(INFO, <span class="number">10</span>) &lt;&lt; <span class="string">"Got the "</span> &lt;&lt; COUNTER &lt;&lt; <span class="string">"th cookie"</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>上面的语句表示，在程序中周期性的记录日志信息，在该语句第1、11、21……次被执行的时候，记录日志信息。COUNTER变量表示该语句被执行的次数。</p>
+<ol start="3">
+<li><code>LOG_IF_EVERY_N(severity, condition, n)</code><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOG_IF_EVERY_N(INFO, (size &gt; <span class="number">1024</span>), <span class="number">10</span>) &lt;&lt; <span class="string">"Got the "</span> &lt;&lt; COUNTER&lt;&lt; <span class="string">"th big cookie"</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>上面的语句为1，2项功能的合并，size&gt;1024的条件连续成立10次的时候记录日志信息。COUNTER变量表示该条件成立的次数。</p>
+<ol start="4">
+<li><code>LOG_FIRST_N(severity, n)</code><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOG_FIRST_N(INFO, <span class="number">20</span>) &lt;&lt; <span class="string">"Got the "</span> &lt;&lt; COUNTER &lt;&lt; <span class="string">"th cookie"</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>上面的语句表示，当该语句只在首次执行了20次以后记录日志信息， COUNTER变量表示该语句被执行的次数。</p>
+<blockquote>
+<p>RRTS中可以通过引入log.h， 来使用LOG_INFO_EVERY_N等简写宏定义。 </p>
+</blockquote>
+<h1 id="CHECK宏"><a href="#CHECK宏" class="headerlink" title="CHECK宏"></a>CHECK宏</h1><p>为了及早发现程序错误，glog提供了CHECK宏用来在调试中有条件的终止程序。当不满足指定条件时，CHECK宏会终止程序，并记录相应日志信息。类似于c标准库中的assert，但CHECK宏也可以用于release版程序（不受NDEBUG限制）。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CHECK(fp-&gt;Write(x) == <span class="number">4</span>) &lt;&lt; <span class="string">"Write failed!"</span>;</span><br></pre></td></tr></table></figure></p>
+<p>由CHECK宏派生出许多简便实用的宏，下面举一些常见的例子。</p>
+<h2 id="1-大小关系检测"><a href="#1-大小关系检测" class="headerlink" title="1. 大小关系检测"></a>1. 大小关系检测</h2><table>
+<thead>
+<tr>
+<th>Macros</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CHECK_EQ(var1,var2)</td>
+<td>if var1 == var2, then pass</td>
+</tr>
+<tr>
+<td>CHECK_NE(var1,var2)</td>
+<td>if var1 != var2, then pass</td>
+</tr>
+<tr>
+<td>CHECK_LE(var1,var2)</td>
+<td>if var1 &lt;= var2, then pass</td>
+</tr>
+<tr>
+<td>CHECK_LT(var1,var2)</td>
+<td>if var1 &lt; var2, then pass</td>
+</tr>
+<tr>
+<td>CHECK_GE(var1,var2)</td>
+<td>if var1 &gt;= var2, then pass</td>
+</tr>
+<tr>
+<td>CHECK_GT(var1,var2)</td>
+<td>if var1 &gt; var2, then pass</td>
+</tr>
+</tbody>
+</table>
+<p>这些宏会检测两个参数的大小关系，不符合预期条件时会记录FATAL日志。检测类型不一致时，可以使用static_cast转换类型。相应信息通过流来传递。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CHECK_NE(<span class="number">1</span>, <span class="number">2</span>) &lt;&lt; <span class="string">": The world must be ending!"</span>;</span><br></pre></td></tr></table></figure></p>
+<h2 id="2-浮点数大小检测"><a href="#2-浮点数大小检测" class="headerlink" title="2. 浮点数大小检测"></a>2. 浮点数大小检测</h2><table>
+<thead>
+<tr>
+<th>Macros</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CHECK_DOUBLE_EQ(var1,var2)</td>
+<td>如果var1，var2差距不超过0.000000000000001L，通过</td>
+</tr>
+<tr>
+<td>CHECK_NEAR(val1,var2,margin)</td>
+<td>如果var1，var2差距不超过margin，通过</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-指针非空检测"><a href="#3-指针非空检测" class="headerlink" title="3. 指针非空检测"></a>3. 指针非空检测</h2><p>CHECK_NOTNULL<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CHECK_NOTNULL(some_ptr);</span><br><span class="line">some_ptr-&gt;DoSomething();</span><br></pre></td></tr></table></figure></p>
+<p>CHECK_NOTNULL检测通过后会返回输入的指针。该宏很适合用在初始化中，例如：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">S</span> &#123;</span></span><br><span class="line">   S(Something* ptr) : ptr_(CHECK_NOTNULL(ptr)) &#123;&#125;</span><br><span class="line">   Something* ptr_;</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure></p>
+<h2 id="4-字符串检测"><a href="#4-字符串检测" class="headerlink" title="4. 字符串检测"></a>4. 字符串检测</h2><table>
+<thead>
+<tr>
+<th>Macros</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>CHECK_STREQ(s1,s2)|检测字符串相同<br>CHECK_STRNE(s1,s2)|检测字符串不同<br>CHECK_STRCASEEQ(s1,s2)|忽略大小写，检测字符串相同<br>CHECK_STRCASENE(s1,s2)|忽略大小写，检测字符串不同</p>
+<h1 id="Google风格的perror"><a href="#Google风格的perror" class="headerlink" title="Google风格的perror()"></a>Google风格的perror()</h1><p> glog提供了与LOG*和CHECK宏作用等价的,但可以将errno的状态及其描述也记录到日志中的宏。 </p>
+<ul>
+<li>PLOG() </li>
+<li>PLOG_IF() </li>
+<li>PCHECK()<br>例子：<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PCHECK(write(<span class="number">1</span>, <span class="literal">NULL</span>, <span class="number">2</span>) &gt;= <span class="number">0</span>) &lt;&lt; <span class="string">"Write NULL failed"</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>当write函数出错，会返回小于0的值，导致PCHECK不通过，并输出日志信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">F0825 185142 test.cc:22] Check failed: write(1, NULL, 2) &gt;= 0 Write NULL failed: Bad address [14]</span><br></pre></td></tr></table></figure></p>
+<h1 id="异常信号处理"><a href="#异常信号处理" class="headerlink" title="异常信号处理"></a>异常信号处理</h1><p>glog提供了比较方便的程序异常处理机制。例如，当程序出现SIGSEGV异常信号时，glog的默认异常处理过程会导出非常有用的异常信息。异常处理过程可以通过<code>google::InstallFailureSignalHandler()</code>来自定义。下面为异常处理过程的输出例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">*** Aborted at 1225095260 (unix time) try &quot;date -d @1225095260&quot; if you are using GNU date ***</span><br><span class="line">*** SIGSEGV (@0x0) received by PID 17711 (TID 0x7f893090a6f0) from PID 0; stack trace: ***</span><br><span class="line">PC: @           0x412eb1 TestWaitingLogSink::send()</span><br><span class="line">    @     0x7f892fb417d0 (unknown)</span><br><span class="line">    @     0x412eb1 TestWaitingLogSink::send()</span><br><span class="line">    @     0x7f89304f7f06 google::LogMessage::SendToLog()</span><br><span class="line">    @     0x7f89304f35af google::LogMessage::Flush()</span><br><span class="line">    @     0x7f89304f3739 google::LogMessage::~LogMessage()</span><br><span class="line">    @     0x408cf4 TestLogSinkWaitTillSent()</span><br><span class="line">    @     0x4115de main</span><br><span class="line">    @     0x7f892f7ef1c4 (unknown)</span><br><span class="line">    @     0x4046f9 (unknown)</span><br></pre></td></tr></table></figure></p>
+<p>默认情况下，异常信息是输出到<code>stderr</code>，通过<code>InstallFailureWriter()</code>可以改变输出目标。</p>
+<h1 id="Verbose-Logging"><a href="#Verbose-Logging" class="headerlink" title="Verbose Logging"></a>Verbose Logging</h1><p> glog提供VLOG宏, 让用户自定义分级信息, 便于用户调试、查找完问题以后，屏蔽日志信息，减少冗杂信息的困扰。该分级与LOG宏对应的严重性分级是独立管理，在命令行参数设置中独立设置“v”或“vmodule”参数来控制，具体见“参数设置”部分标志说明。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VLOG_IF(<span class="number">1</span>, (size &gt; <span class="number">1024</span>))&lt;&lt; <span class="string">"I'm printed when size is more than 1024 and when you run the "</span><span class="string">"program with --v=1 or more"</span>;</span><br></pre></td></tr></table></figure></p>
+<p>上面的语句，只有在size&gt;1024成立时且命令行参数v的值不小于1，才记录日志信息。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VLOG_EVERY_N(<span class="number">1</span>, <span class="number">10</span>)&lt;&lt; <span class="string">"I'm printed every 10th occurrence, and when you run the program "</span><span class="string">"with --v=1 or more. Present occurence is "</span> &lt;&lt; COUNTER;</span><br></pre></td></tr></table></figure></p>
+<p>上面的语句，只有在命令行参数v的值不小于1时，才会每执行10次记录一次日志信息。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VLOG_IF_EVERY_N(<span class="number">1</span>, (size &gt; <span class="number">1024</span>), <span class="number">10</span>)&lt;&lt; <span class="string">"I'm printed on every 10th occurence of case when size is more "</span><span class="string">" than 1024, when you run the program with --v=1 or more. "</span>; <span class="string">"Present occurence is "</span> &lt;&lt; COUNTER;</span><br></pre></td></tr></table></figure></p>
+<p>上面的语句，只有在命令行参数v的值不小于1时，若size&gt;1024条件连续成立10次，记录一次日志信息。</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="http://kevinlad.me/2017/11/25/Glog-Tutorial/" data-id="cjt5hj8gc00010tvvm38m2kme" class="article-share-link"><i class="fas fa-share"></i>Share</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+        <a href="http://kevinlad.me/2017/11/25/Glog-Tutorial/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://kevinlad.me/2017/11/25/Glog-Tutorial/">Comments</a>
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2017/11/25/ROS-URDF-Tutorial-1-URDF简介与入门/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    URDF教程 (1): URDF简介与入门
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2017/11/25/Termios结构体/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">Termios结构体</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+        <section id="comments">
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+</section>
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">recent</h3>
+        <div class="widget">
+            <ul id="recent-post" class="no-thumbnail">
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2018/07/09/RoboRTS Gazebo Plugin/" class="title">RoboRTS Tutorial | Gazebo Plugin</a></p>
+                            <p class="item-date"><time datetime="2018-07-09T07:55:37.000Z" itemprop="datePublished">2018-07-09</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2017/11/25/ud810-note-1/" class="title">ROS入门 (1) | ROS安装与配置</a></p>
+                            <p class="item-date"><time datetime="2017-11-25T12:55:37.000Z" itemprop="datePublished">2017-11-25</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2017/11/25/ROS-URDF-Tutorial-1-URDF简介与入门/" class="title">URDF教程 (1): URDF简介与入门</a></p>
+                            <p class="item-date"><time datetime="2017-11-25T08:10:17.000Z" itemprop="datePublished">2017-11-25</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2017/11/25/Glog-Tutorial/" class="title">Glog Tutorial</a></p>
+                            <p class="item-date"><time datetime="2017-11-25T08:01:16.000Z" itemprop="datePublished">2017-11-25</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2017/11/25/Termios结构体/" class="title">Termios结构体</a></p>
+                            <p class="item-date"><time datetime="2017-11-25T07:55:37.000Z" itemprop="datePublished">2017-11-25</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">archives</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">tags</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/RoboRTS/">RoboRTS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gazebo/">gazebo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/glog/">glog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ros/">ros</a><span class="tag-list-count">3</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">tag cloud</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/RoboRTS/" style="font-size: 10px;">RoboRTS</a> <a href="/tags/gazebo/" style="font-size: 10px;">gazebo</a> <a href="/tags/glog/" style="font-size: 10px;">glog</a> <a href="/tags/ros/" style="font-size: 20px;">ros</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">links</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2019 Kevin Lee<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+        </div>
+    </div>
+</footer>
+        
+    
+    <script>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://kevinlad.me/2017/11/25/Glog-Tutorial/';
+        
+        this.page.identifier = 'Glog-Tutorial';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'kevinlad-blog' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>

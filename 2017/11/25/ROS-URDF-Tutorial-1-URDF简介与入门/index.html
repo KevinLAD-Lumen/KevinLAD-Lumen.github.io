@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    
+    <title>URDF教程 (1): URDF简介与入门 | More Than Robotics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="在ROS中，当我们要对机器人进行仿真模拟时，便需要对机器人进行建模。而URDF ( Unified Robot Description Format,意为统一机器人描述格式）正是一种用来代表机器人模型的XML代码格式。本文讲简单的对URDF进行介绍，并尝试建立一个差速轮小车的模型。教程最后会给出一系列的参考网址。在之后的教程中，我们会使用Xacro来简化URDF文件，还会添加Gazebo的相关内容">
+<meta name="keywords" content="ros">
+<meta property="og:type" content="article">
+<meta property="og:title" content="URDF教程 (1): URDF简介与入门">
+<meta property="og:url" content="http://kevinlad.me/2017/11/25/ROS-URDF-Tutorial-1-URDF简介与入门/index.html">
+<meta property="og:site_name" content="More Than Robotics">
+<meta property="og:description" content="在ROS中，当我们要对机器人进行仿真模拟时，便需要对机器人进行建模。而URDF ( Unified Robot Description Format,意为统一机器人描述格式）正是一种用来代表机器人模型的XML代码格式。本文讲简单的对URDF进行介绍，并尝试建立一个差速轮小车的模型。教程最后会给出一系列的参考网址。在之后的教程中，我们会使用Xacro来简化URDF文件，还会添加Gazebo的相关内容">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-10-30T10:32:01.912Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="URDF教程 (1): URDF简介与入门">
+<meta name="twitter:description" content="在ROS中，当我们要对机器人进行仿真模拟时，便需要对机器人进行建模。而URDF ( Unified Robot Description Format,意为统一机器人描述格式）正是一种用来代表机器人模型的XML代码格式。本文讲简单的对URDF进行介绍，并尝试建立一个差速轮小车的模型。教程最后会给出一系列的参考网址。在之后的教程中，我们会使用Xacro来简化URDF文件，还会添加Gazebo的相关内容">
+    
+
+    
+        <link rel="alternate" href="/" title="More Than Robotics" type="application/atom+xml">
+    
+
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+
+
+</head>
+</html>
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">More Than Robotics</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/avatar.png">
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search">
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something...">
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search">
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/avatar.png">
+            <h2 id="name">KevinLAD</h2>
+            <h3 id="title">Robotics Engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Shenzhen, China</span>
+            <a id="follow" target="_blank" href="https://github.com/kevinladlee/">FOLLOW</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                5
+                <span>posts</span>
+            </div>
+            <div class="article-info-block">
+                4
+                <span>tags</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/kevinladlee/" target="_blank" title="github">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="dribbble">
+                            <i class="fab fa-dribbble"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="rss">
+                            <i class="fab fa-rss"></i>
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-ROS-URDF-Tutorial-1-URDF简介与入门" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            URDF教程 (1): URDF简介与入门
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/11/25/ROS-URDF-Tutorial-1-URDF简介与入门/">
+            <time datetime="2017-11-25T08:10:17.000Z" itemprop="datePublished">2017-11-25</time>
+        </a>
+    </div>
+
+
+                        
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/ros/">ros</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>在ROS中，当我们要对机器人进行仿真模拟时，便需要对机器人进行建模。而URDF ( Unified Robot Description Format,意为统一机器人描述格式）正是一种用来代表机器人模型的XML代码格式。本文讲简单的对URDF进行介绍，并尝试建立一个差速轮小车的模型。教程最后会给出一系列的参考网址。在之后的教程中，我们会使用Xacro来简化URDF文件，还会添加Gazebo的相关内容，来实现Gazebo的仿真。</p>
+<a id="more"></a>
+<p>运行环境：</p>
+<ul>
+<li>Ubuntu 16.04</li>
+<li>ROS Kinetic</li>
+<li>Gazebo7</li>
+</ul>
+<p>首先，我们先来安装URDF_Tutorial包。我们可以利用里面的launch文件来进行下面的步骤。</p>
+<blockquote>
+<p>sudo apt-get install ros-kinetic-urdf-tutorial</p>
+</blockquote>
+<h2 id="URDF基本语法"><a href="#URDF基本语法" class="headerlink" title="URDF基本语法"></a>URDF基本语法</h2><p>接下来我们就建立一个link来代表我们小车(dd_robot)的车身。参考如下<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version='1.0'?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">robot</span> <span class="attr">name</span>=<span class="string">"dd_robot"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Base Link --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">name</span>=<span class="string">"base_link"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">visual</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0 0"</span> <span class="attr">rpy</span>=<span class="string">"0 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">box</span> <span class="attr">size</span>=<span class="string">"0.5 0.5 0.25"</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">visual</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">link</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">robot</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>URDF以一种树状结构来描述一个机器人，树结构主要由两个元素构成：link与joint。在URDF中，link元素以一个刚体的物理性质（尺寸，初始位置，颜色等等）来描述该刚体。Link元素之间由joint元素相连接。Joint元素描述了刚体间的的运动学与动力学关系。（刚体间的连接，关节的类型，旋转轴，阻尼，摩擦，等等）</p>
+<p>上面XML中，我们首先定义了一个Robot，起名叫dd_robot，同时目前他只包含一个link，我们管他叫<code>base_link</code>，以它来代表我们的小车车身。从外观上看，我们把它定义为了一个0.5米长，0.5米宽，0.25米高的方块盒子，并且初始位置为环境的最中心（0,0,0），并且在roll，pitch，yaw轴都没有旋转。在URDF模型中，通常要以<code>base_link</code>作为root link，以此为支出来搭建出整个机器人的运动学模型。</p>
+<p><strong>TIPS</strong>:XML中的注释格式为 <code>&lt;!-- 我是注释 --&gt;</code>。</p>
+<p>接下来，我们可以<code>cd</code>到URDF所在的目录，运行以下语句，来在rviz中查看我们的模型（一个红色的方块盒子）。</p>
+<p>下一步，我们要给我们的小车装上轮子。每当我们要添加一个<code>link</code>元素到URDF模型中的时候，我们都必须添加<code>joint</code>元素来形容<code>link</code>之间的关系。Joint元素定义了这个关节是可以运动的或者固定不动的。对于可以移动的关节，URDF描述了关节的运动学与动力学性质以及相应的安全极限。在URDF中，有以下六种可能的joint类型。</p>
+<ul>
+<li><p><strong>Fixed</strong>:这种joint其实并不是一个真正意义上的“关节”，因为它并不能移动。它的每一个自由度都是上了锁一样的固定住的。这种关节不需要轴、校准、动力学、限位以及可靠的控制器。</p>
+</li>
+<li><p><strong>Revolute</strong>：此种关节可以绕着一个轴旋转，并且有特定指明的上限和下限。</p>
+</li>
+<li><p><strong>Continuous</strong>：此种关节代表了连续的铰链接（continuous hinge joint），可以绕着一个轴来连续的旋转，没有上限与下限。</p>
+</li>
+<li><p><strong>Prismatic</strong>：这是一种<a href="https://en.wikipedia.org/wiki/Prismatic_joint" target="_blank" rel="noopener">滑动连接</a>，（类似小滑块）,可以沿着某个轴滑动，并且有特定的滑动上限下限范围。</p>
+</li>
+<li><p><strong>Floating</strong>：此种连接方式在所有的自由度上都是可以自由移动的(六自由度万向节)。</p>
+</li>
+<li><p><strong>Planar</strong>：这种连接方式可以自由的在垂直于轴线的平面中运动。</p>
+</li>
+</ul>
+<p>很显然，对于我们的小车来说，轮子与车身之间应该是<code>Continuous Joint</code>，以此来代表轮子可以无限的转动。以下为修改后的URDF文件。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version='1.0'?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">robot</span> <span class="attr">name</span>=<span class="string">"dd_robot"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Base Link --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">name</span>=<span class="string">"base_link"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">visual</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0 0"</span> <span class="attr">rpy</span>=<span class="string">"0 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	  <span class="tag">&lt;<span class="name">box</span> <span class="attr">size</span>=<span class="string">"0.5 0.5 0.25"</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">visual</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">link</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Right Wheel --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">name</span>=<span class="string">"right_wheel"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">visual</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0 0"</span> <span class="attr">rpy</span>=<span class="string">"1.570795 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	  <span class="tag">&lt;<span class="name">cylinder</span> <span class="attr">length</span>=<span class="string">"0.1"</span> <span class="attr">radius</span>=<span class="string">"0.2"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">visual</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">link</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">joint</span> <span class="attr">name</span>=<span class="string">"joint_right_wheel"</span> <span class="attr">type</span>=<span class="string">"continuous"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span> <span class="attr">link</span>=<span class="string">"base_link"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">child</span> <span class="attr">link</span>=<span class="string">"right_wheel"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 -0.30 0"</span> <span class="attr">rpy</span>=<span class="string">"0 0 0"</span> /&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">axis</span> <span class="attr">xyz</span>=<span class="string">"0 1 0"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">joint</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Left Wheel --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">name</span>=<span class="string">"left_wheel"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">visual</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0 0"</span> <span class="attr">rpy</span>=<span class="string">"1.570795 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	  <span class="tag">&lt;<span class="name">cylinder</span> <span class="attr">length</span>=<span class="string">"0.1"</span> <span class="attr">radius</span>=<span class="string">"0.2"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">visual</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">link</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">joint</span> <span class="attr">name</span>=<span class="string">"joint_left_wheel"</span> <span class="attr">type</span>=<span class="string">"continuous"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span> <span class="attr">link</span>=<span class="string">"base_link"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">child</span> <span class="attr">link</span>=<span class="string">"left_wheel"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0.30 0"</span> <span class="attr">rpy</span>=<span class="string">"0 0 0"</span> /&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">axis</span> <span class="attr">xyz</span>=<span class="string">"0 1 0"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">joint</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">robot</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>我们在修改后的URDF文件中做了以下几件事：</p>
+<ul>
+<li><p>每个轮子定义为0.2m半径，0.1米长的圆柱。每个轮子的圆心都在车身的中心轴上，并且每个轮子绕x轴旋转了1.560795（= pi/2=90 degrees）。</p>
+</li>
+<li><p>每个joint依照着一个父节点和一个子加点来定义。<code>base_link</code>是我们模型中的root link，我们的轮子定义的位置都是按照<code>base_link</code>的相对位置来描述。</p>
+</li>
+<li><p>轮子的joint由父参考系来定义。所以轮子节点的位置是x轴的+0.3m和-0.3m。</p>
+</li>
+<li><p>这些joint元素完整的定义了整个机器人的运动学模型。</p>
+</li>
+</ul>
+<p>接下来，我们需要向里面添加脚轮（caster）来保证我们的两轮小车保持平衡，同时改变各个部分的颜色，来让它的外观好看一些。以下为修改后的URDF文件。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version='1.0'?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">robot</span> <span class="attr">name</span>=<span class="string">"dd_robot"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Base Link --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">name</span>=<span class="string">"base_link"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">visual</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0 0"</span> <span class="attr">rpy</span>=<span class="string">"0 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	  <span class="tag">&lt;<span class="name">box</span> <span class="attr">size</span>=<span class="string">"0.5 0.5 0.25"</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">material</span> <span class="attr">name</span>=<span class="string">"blue"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">color</span> <span class="attr">rgba</span>=<span class="string">"0 0.5 1 1"</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">material</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">visual</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- Caster --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">visual</span> <span class="attr">name</span>=<span class="string">"caster"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0.2 0 -0.125"</span> <span class="attr">rpy</span>=<span class="string">"0 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">sphere</span> <span class="attr">radius</span>=<span class="string">"0.05"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">visual</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;/<span class="name">link</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Right Wheel --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">name</span>=<span class="string">"right_wheel"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">visual</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0 0"</span> <span class="attr">rpy</span>=<span class="string">"1.570795 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	  <span class="tag">&lt;<span class="name">cylinder</span> <span class="attr">length</span>=<span class="string">"0.1"</span> <span class="attr">radius</span>=<span class="string">"0.2"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">material</span> <span class="attr">name</span>=<span class="string">"black"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">color</span> <span class="attr">rgba</span>=<span class="string">"0.05 0.05 0.05 1"</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">material</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">visual</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">link</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">joint</span> <span class="attr">name</span>=<span class="string">"joint_right_wheel"</span> <span class="attr">type</span>=<span class="string">"continuous"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span> <span class="attr">link</span>=<span class="string">"base_link"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">child</span> <span class="attr">link</span>=<span class="string">"right_wheel"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 -0.30 0"</span> <span class="attr">rpy</span>=<span class="string">"0 0 0"</span> /&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">axis</span> <span class="attr">xyz</span>=<span class="string">"0 1 0"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">joint</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Left Wheel --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">name</span>=<span class="string">"left_wheel"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">visual</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0 0"</span> <span class="attr">rpy</span>=<span class="string">"1.570795 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	  <span class="tag">&lt;<span class="name">cylinder</span> <span class="attr">length</span>=<span class="string">"0.1"</span> <span class="attr">radius</span>=<span class="string">"0.2"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">material</span> <span class="attr">name</span>=<span class="string">"black"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">visual</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">link</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">joint</span> <span class="attr">name</span>=<span class="string">"joint_left_wheel"</span> <span class="attr">type</span>=<span class="string">"continuous"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span> <span class="attr">link</span>=<span class="string">"base_link"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">child</span> <span class="attr">link</span>=<span class="string">"left_wheel"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0.30 0"</span> <span class="attr">rpy</span>=<span class="string">"0 0 0"</span> /&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">axis</span> <span class="attr">xyz</span>=<span class="string">"0 1 0"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">joint</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">robot</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>这其中：</p>
+<ul>
+<li><p>我们把脚轮(Caster)定义成了0.05m的小球，但没有把它定义为一个link。</p>
+</li>
+<li><p>我们用<code>&lt;material&gt;</code>标签定义了<code>&lt;color&gt;</code>，来代表对应部分的颜色。其中<code>&lt;color&gt;</code>由red/green/blue/alpha组成，alpha代表颜色的明度，每个参数范围都是[0-1]。</p>
+</li>
+</ul>
+<p>接下来是最后一步，添加碰撞性质到每一个<code>link</code>上。虽然我们在之前以及定义了可视化相关的性质，但是gazebo的物理碰撞检测引擎依旧需要碰撞性质参数来明确物体的便捷。如果一个物体具有很复杂的可视化性质（如 mesh），这是就需要一个简化的碰撞性质参数来提高碰撞检测的性能。<br>以下为最终修改过的代码。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version='1.0'?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">robot</span> <span class="attr">name</span>=<span class="string">"dd_robot"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Base Link --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">name</span>=<span class="string">"base_link"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">visual</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0 0"</span> <span class="attr">rpy</span>=<span class="string">"0 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	  <span class="tag">&lt;<span class="name">box</span> <span class="attr">size</span>=<span class="string">"0.5 0.5 0.25"</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">material</span> <span class="attr">name</span>=<span class="string">"blue"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">color</span> <span class="attr">rgba</span>=<span class="string">"0 0.5 1 1"</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">material</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">visual</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- Base collision --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">collision</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0 0"</span> <span class="attr">rpy</span>=<span class="string">"0 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	  <span class="tag">&lt;<span class="name">box</span> <span class="attr">size</span>=<span class="string">"0.5 0.5 0.25"</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">collision</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- Caster --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">visual</span> <span class="attr">name</span>=<span class="string">"caster"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0.2 0 -0.125"</span> <span class="attr">rpy</span>=<span class="string">"0 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">sphere</span> <span class="attr">radius</span>=<span class="string">"0.05"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">visual</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- Caster collision --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">collision</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0.2 0 -0.125"</span> <span class="attr">rpy</span>=<span class="string">"0 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">sphere</span> <span class="attr">radius</span>=<span class="string">"0.05"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">collision</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">link</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Right Wheel --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">name</span>=<span class="string">"right_wheel"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">visual</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0 0"</span> <span class="attr">rpy</span>=<span class="string">"1.570795 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	  <span class="tag">&lt;<span class="name">cylinder</span> <span class="attr">length</span>=<span class="string">"0.1"</span> <span class="attr">radius</span>=<span class="string">"0.2"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">material</span> <span class="attr">name</span>=<span class="string">"black"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">color</span> <span class="attr">rgba</span>=<span class="string">"0.05 0.05 0.05 1"</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">material</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">visual</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- Right Wheel collision --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">collision</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0 0"</span> <span class="attr">rpy</span>=<span class="string">"1.570795 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	  <span class="tag">&lt;<span class="name">cylinder</span> <span class="attr">length</span>=<span class="string">"0.1"</span> <span class="attr">radius</span>=<span class="string">"0.2"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">collision</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">link</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Right Wheel joint --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">joint</span> <span class="attr">name</span>=<span class="string">"joint_right_wheel"</span> <span class="attr">type</span>=<span class="string">"continuous"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span> <span class="attr">link</span>=<span class="string">"base_link"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">child</span> <span class="attr">link</span>=<span class="string">"right_wheel"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 -0.30 0"</span> <span class="attr">rpy</span>=<span class="string">"0 0 0"</span> /&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">axis</span> <span class="attr">xyz</span>=<span class="string">"0 1 0"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">joint</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Left Wheel --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">name</span>=<span class="string">"left_wheel"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">visual</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0 0"</span> <span class="attr">rpy</span>=<span class="string">"1.570795 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	  <span class="tag">&lt;<span class="name">cylinder</span> <span class="attr">length</span>=<span class="string">"0.1"</span> <span class="attr">radius</span>=<span class="string">"0.2"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">material</span> <span class="attr">name</span>=<span class="string">"black"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">visual</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- Left Wheel collision --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">collision</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0 0"</span> <span class="attr">rpy</span>=<span class="string">"1.570795 0 0"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geometry</span>&gt;</span></span><br><span class="line">	  <span class="tag">&lt;<span class="name">cylinder</span> <span class="attr">length</span>=<span class="string">"0.1"</span> <span class="attr">radius</span>=<span class="string">"0.2"</span> /&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">geometry</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">collision</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">link</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- Left Wheel joint --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">joint</span> <span class="attr">name</span>=<span class="string">"joint_left_wheel"</span> <span class="attr">type</span>=<span class="string">"continuous"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span> <span class="attr">link</span>=<span class="string">"base_link"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">child</span> <span class="attr">link</span>=<span class="string">"left_wheel"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">"0 0.30 0"</span> <span class="attr">rpy</span>=<span class="string">"0 0 0"</span> /&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">axis</span> <span class="attr">xyz</span>=<span class="string">"0 1 0"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">joint</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">robot</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="http://kevinlad.me/2017/11/25/ROS-URDF-Tutorial-1-URDF简介与入门/" data-id="cjt5hj8h2000g0tvvar0spad1" class="article-share-link"><i class="fas fa-share"></i>Share</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+        <a href="http://kevinlad.me/2017/11/25/ROS-URDF-Tutorial-1-URDF简介与入门/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://kevinlad.me/2017/11/25/ROS-URDF-Tutorial-1-URDF简介与入门/">Comments</a>
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2017/11/25/ud810-note-1/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    ROS入门 (1) | ROS安装与配置
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2017/11/25/Glog-Tutorial/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">Glog Tutorial</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+        <section id="comments">
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+</section>
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">recent</h3>
+        <div class="widget">
+            <ul id="recent-post" class="no-thumbnail">
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2018/07/09/RoboRTS Gazebo Plugin/" class="title">RoboRTS Tutorial | Gazebo Plugin</a></p>
+                            <p class="item-date"><time datetime="2018-07-09T07:55:37.000Z" itemprop="datePublished">2018-07-09</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2017/11/25/ud810-note-1/" class="title">ROS入门 (1) | ROS安装与配置</a></p>
+                            <p class="item-date"><time datetime="2017-11-25T12:55:37.000Z" itemprop="datePublished">2017-11-25</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2017/11/25/ROS-URDF-Tutorial-1-URDF简介与入门/" class="title">URDF教程 (1): URDF简介与入门</a></p>
+                            <p class="item-date"><time datetime="2017-11-25T08:10:17.000Z" itemprop="datePublished">2017-11-25</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2017/11/25/Glog-Tutorial/" class="title">Glog Tutorial</a></p>
+                            <p class="item-date"><time datetime="2017-11-25T08:01:16.000Z" itemprop="datePublished">2017-11-25</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2017/11/25/Termios结构体/" class="title">Termios结构体</a></p>
+                            <p class="item-date"><time datetime="2017-11-25T07:55:37.000Z" itemprop="datePublished">2017-11-25</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">archives</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">4</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">tags</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/RoboRTS/">RoboRTS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gazebo/">gazebo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/glog/">glog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ros/">ros</a><span class="tag-list-count">3</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">tag cloud</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/RoboRTS/" style="font-size: 10px;">RoboRTS</a> <a href="/tags/gazebo/" style="font-size: 10px;">gazebo</a> <a href="/tags/glog/" style="font-size: 10px;">glog</a> <a href="/tags/ros/" style="font-size: 20px;">ros</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">links</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2019 Kevin Lee<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+        </div>
+    </div>
+</footer>
+        
+    
+    <script>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://kevinlad.me/2017/11/25/ROS-URDF-Tutorial-1-URDF简介与入门/';
+        
+        this.page.identifier = 'ROS-URDF-Tutorial-1-URDF简介与入门';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'kevinlad-blog' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>
